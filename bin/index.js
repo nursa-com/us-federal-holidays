@@ -133,7 +133,7 @@ function allFederalHolidaysForYear() {
 
 function isAHoliday() {
   var date = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Date();
-  var useOptionalHolidays = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var lessHolidays = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
   var year = date.getUTCFullYear();
   var allForYear = allFederalHolidaysForYear(year);
   var nextYear = allFederalHolidaysForYear(year + 1);
@@ -142,8 +142,14 @@ function isAHoliday() {
     allForYear.push(nextYear[0]);
   }
 
+  if (lessHolidays) {
+    allForYear = allForYear.filter(function (h) {
+      return !h.optional;
+    });
+  }
+
   return allForYear.some(function (holiday) {
-    return (useOptionalHolidays || !holiday.optional) && holiday.isPresent(date);
+    return holiday.isPresent(date);
   });
 }
 
@@ -151,5 +157,3 @@ module.exports = {
   isAHoliday: isAHoliday,
   allForYear: allFederalHolidaysForYear
 };
-var test = [isAHoliday(new Date('2010-12-31T00:00:00Z'))];
-console.log(test);

@@ -146,22 +146,24 @@ function allFederalHolidaysForYear(year = new Date().getFullYear()) {
   return holidays;
 }
 
-function isAHoliday(date = new Date(), useOptionalHolidays = false) {
+function isAHoliday(date = new Date(), lessHolidays = false) {
   const year = date.getUTCFullYear();
 
   // Get the holidays this year, plus check if New Year's Day of next year is
   // observed on December 31 and if so, add it to this year's list.
-  const allForYear = allFederalHolidaysForYear(year);
+  let allForYear = allFederalHolidaysForYear(year);
   const nextYear = allFederalHolidaysForYear(year + 1);
   if (nextYear[0].startDate.getUTCFullYear() === year) {
     allForYear.push(nextYear[0]);
   }
 
+  if (lessHolidays) {
+    allForYear = allForYear.filter(h => !h.optional);
+  }
+
   // If any dates in this year's holiday list match the one passed in, then
   // the passed-in date is a holiday.  Otherwise, it is not.
-  return allForYear.some(holiday =>
-    (useOptionalHolidays || !holiday.optional) &&  holiday.isPresent(date)
-  );
+  return allForYear.some(holiday => holiday.isPresent(date));
 }
 
 module.exports = {
