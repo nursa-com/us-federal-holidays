@@ -146,7 +146,7 @@ function allFederalHolidaysForYear(year = new Date().getFullYear()) {
   return holidays;
 }
 
-function isAHoliday(date = new Date(), lessHolidays = false) {
+function isAHoliday(date = new Date(), useOptionalHolidays = false) {
   const year = date.getUTCFullYear();
 
   // Get the holidays this year, plus check if New Year's Day of next year is
@@ -157,7 +157,7 @@ function isAHoliday(date = new Date(), lessHolidays = false) {
     allForYear.push(nextYear[0]);
   }
 
-  if (lessHolidays) {
+  if (!useOptionalHolidays) {
     allForYear = allForYear.filter(h => !h.optional);
   }
 
