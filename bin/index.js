@@ -25,8 +25,7 @@ var Holiday = function () {
       this.endDate = endDate;
     } else {
       this.endDate = new Date(startDate);
-      this.endDate.setDate(this.endDate.getDate() + 1);
-      this.endDate.setHours(23, 59, 59, 999);
+      this.endDate.setUTCHours(23, 59, 59, 999);
     }
 
     this.optional = optional;
@@ -133,7 +132,7 @@ function allFederalHolidaysForYear() {
 
 function isAHoliday() {
   var date = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Date();
-  var lessHolidays = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var useOptionalHolidays = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
   var year = date.getUTCFullYear();
   var allForYear = allFederalHolidaysForYear(year);
   var nextYear = allFederalHolidaysForYear(year + 1);
@@ -142,7 +141,7 @@ function isAHoliday() {
     allForYear.push(nextYear[0]);
   }
 
-  if (lessHolidays) {
+  if (!useOptionalHolidays) {
     allForYear = allForYear.filter(function (h) {
       return !h.optional;
     });
