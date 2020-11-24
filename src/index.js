@@ -11,8 +11,7 @@ class Holiday {
       this.endDate = endDate
     } else {
       this.endDate = new Date(startDate);
-      this.endDate.setDate(this.endDate.getDate() + 1);
-      this.endDate.setHours(23,59,59,999);
+      this.endDate.setUTCHours(23,59,59,999);
     }
     this.optional = optional;
   }
