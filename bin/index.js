@@ -14,7 +14,9 @@ var Holiday = function () {
         _ref$endDate = _ref.endDate,
         endDate = _ref$endDate === void 0 ? null : _ref$endDate,
         _ref$optional = _ref.optional,
-        optional = _ref$optional === void 0 ? false : _ref$optional;
+        optional = _ref$optional === void 0 ? false : _ref$optional,
+        _ref$holiday_id = _ref.holiday_id,
+        holiday_id = _ref$holiday_id === void 0 ? null : _ref$holiday_id;
 
     _classCallCheck(this, Holiday);
 
@@ -29,6 +31,7 @@ var Holiday = function () {
     }
 
     this.optional = optional;
+    this.holiday_id = holiday_id;
   }
 
   _createClass(Holiday, [{
@@ -74,55 +77,67 @@ function allFederalHolidaysForYear() {
   var holidays = [];
   holidays.push(new Holiday({
     name: "New Year's Day",
-    startDate: new Date(Date.parse("1/1/".concat(year, " GMT")))
+    startDate: new Date(Date.parse("1/1/".concat(year, " GMT"))),
+    holiday_id: 'NEW_YR_DAY'
   }));
   holidays.push(new Holiday({
     name: "Birthday of Martin Luther King, Jr.",
     startDate: getNthDayOf(3, 1, 1, year),
-    optional: true
+    optional: true,
+    holiday_id: 'MLK_DAY'
   }));
   holidays.push(new Holiday({
     name: "Washington's Birthday",
     startDate: getNthDayOf(3, 1, 2, year),
-    optional: true
+    optional: true,
+    holiday_id: 'PRESIDENTS_DAY'
   }));
   holidays.push(new Holiday({
     name: "Memorial Day",
-    startDate: getLastDayOf(1, 5, year)
+    startDate: getLastDayOf(1, 5, year),
+    holiday_id: 'MEMORIAL_DAY'
   }));
   holidays.push(new Holiday({
     name: "Independence Day",
-    startDate: new Date(Date.parse("7/4/".concat(year, " GMT")))
+    startDate: new Date(Date.parse("7/4/".concat(year, " GMT"))),
+    holiday_id: 'INDEPENDENCE_DAY'
   }));
   holidays.push(new Holiday({
     name: "Labor Day",
-    startDate: getNthDayOf(1, 1, 9, year)
+    startDate: getNthDayOf(1, 1, 9, year),
+    holiday_id: 'LABOR_DAY'
   }));
   holidays.push(new Holiday({
     name: "Columbus Day",
     startDate: getNthDayOf(2, 1, 10, year),
-    optional: true
+    optional: true,
+    holiday_id: 'COLUMBUS_DAY'
   }));
   holidays.push(new Holiday({
     name: "Thanksgiving Day",
-    startDate: getNthDayOf(4, 4, 11, year)
+    startDate: getNthDayOf(4, 4, 11, year),
+    holiday_id: 'THANKSGIVING'
   }));
   holidays.push(new Holiday({
     name: "Veterans Day",
     startDate: new Date(Date.parse("11/11/".concat(year, " GMT"))),
-    optional: true
+    optional: true,
+    holiday_id: 'VETERANS_DAY'
   }));
   holidays.push(new Holiday({
     name: 'Christmas Eve',
-    startDate: new Date(Date.parse("15:00 12/24/".concat(year, " GMT")))
+    startDate: new Date(Date.parse("15:00 12/24/".concat(year, " GMT"))),
+    holiday_id: 'CHRISTMAS_EVE'
   }));
   holidays.push(new Holiday({
     name: "Christmas Day",
-    startDate: new Date(Date.parse("12/25/".concat(year, " GMT")))
+    startDate: new Date(Date.parse("12/25/".concat(year, " GMT"))),
+    holiday_id: 'CHRISTMAS_DAY'
   }));
   holidays.push(new Holiday({
     name: 'New Year’s Eve',
-    startDate: new Date(Date.parse("15:00 12/31/".concat(year, " GMT")))
+    startDate: new Date(Date.parse("15:00 12/31/".concat(year, " GMT"))),
+    holiday_id: 'NEW_YR_EVE'
   }));
   holidays.forEach(function (holiday) {
     holiday.dateString = "".concat(holiday.startDate.getUTCFullYear(), "-").concat(holiday.startDate.getUTCMonth() + 1, "-").concat(holiday.startDate.getUTCDate());
@@ -133,6 +148,7 @@ function allFederalHolidaysForYear() {
 function isAHoliday() {
   var date = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Date();
   var useOptionalHolidays = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var holidayOverrides = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
   var year = date.getUTCFullYear();
   var allForYear = allFederalHolidaysForYear(year);
   var nextYear = allFederalHolidaysForYear(year + 1);
@@ -144,6 +160,15 @@ function isAHoliday() {
   if (!useOptionalHolidays) {
     allForYear = allForYear.filter(function (h) {
       return !h.optional;
+    });
+  }
+
+  if (holidayOverrides && holidayOverrides.length) {
+    allForYear = allForYear.filter(function (h) {
+      var override = holidayOverrides.find(function (override) {
+        return override.holiday_id === h.holiday_id;
+      });
+      return !override || !override.exclude;
     });
   }
 
